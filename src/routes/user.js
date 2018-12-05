@@ -5,7 +5,7 @@ const Router = express.Router();
 Router.get('/', (req, res) => {
     connection.query('SELECT * from user', (err, results) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération des employés');
+            res.status(500).send('Erreur lors de la récupération des données');
         } else {
             res.json(results);
         }
@@ -14,7 +14,7 @@ Router.get('/', (req, res) => {
 Router.get('/:id', (req, res) => {
     connection.query('SELECT * from user where id=?', req.params.id, (err, results) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération des user');
+            res.status(500).send("Erreur lors de la récupération des données");
         } else {
             res.json(results);
         }
@@ -24,7 +24,7 @@ Router.post('/', (req, res) => {
     connection.query('INSERT into user SET ?', req.body, (err, results) => {
         if (err) {
             console.log(err);
-            res.status(500).send(`Erreur lors de l'envoi d'un user`);
+            res.status(500).send(`Erreur lors de l'insertion des données`);
         }
         else {
             res.sendStatus(200);
@@ -39,10 +39,10 @@ Router.put('/:id',
     (req, res) => {
         const idUser = req.params.id;
         const formData = req.body;
-        connection.query('UPDATE club SET ? WHERE id = ?', [formData, idUser], (err, results) => {
+        connection.query('UPDATE user SET ? WHERE id = ?', [formData, idUser], (err, results) => {
             if (err) {
                 console.log(err);
-                res.status(500).send("Erreur lors de la modification d'un user");
+                res.status(500).send("Erreur lors de la modification des données");
             } else {
                 res.sendStatus(200);
             }
@@ -53,7 +53,7 @@ Router.delete('/:id', (req, res) => {
     connection.query('DELETE FROM user WHERE id =?', req.params.id, (err, results) => {
         if (err) {
             console.log(err);
-            res.status(500).send("Erreur lors de la modification d'un user ");
+            res.status(500).send("Erreur lors de la suppression");
         } else {
             res.sendStatus(200);
         }
