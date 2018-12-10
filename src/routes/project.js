@@ -11,6 +11,7 @@ Router.get('/', (req, res) => {
         }
     });
 })
+
 Router.get('/:id', (req, res) => {
     connection.query('SELECT * from project where id=?', req.params.id, (err, results) => {
         if (err) {
