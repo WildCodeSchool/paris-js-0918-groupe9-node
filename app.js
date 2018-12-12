@@ -4,16 +4,16 @@ const cors = require ('cors');
 const bodyParser = require('body-parser')
 
 const app = express();
-const users = require('./src/routes/users')
-const clubs = require('./src/routes/clubs')
+const user = require('./src/routes/user')
+const club = require('./src/routes/club')
 
 app.use(morgan("dev"));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use("/users", users);
-app.use("/clubs", clubs);
+app.use("/user", user);
+app.use("/club", club);
 
 
 app.get('/',(req,res)=>{
