@@ -18,13 +18,11 @@ app.use(morgan("dev"));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-
-<<<<<<< HEAD
 app.use("/user", user);
 app.use("/club", club);
-=======
+
+
+
 const getToken = req => {
     if (
         req.headers.authorization &&
@@ -51,8 +49,6 @@ const authorize = function (req, res, next) {
             }
         })
     }
->>>>>>> 0c5ecc8b4412d3442851dba28f78ffa1aacb21ed
-
 }
 
 
