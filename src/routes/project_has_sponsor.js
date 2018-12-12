@@ -1,19 +1,18 @@
 const express = require('express');
-const connection = require('../helper/conf.js');
+const connection = require('../helper/conf.js')
 const Router = express.Router();
 
-
 Router.get('/', (req, res) => {
-    connection.query('SELECT * from club', (err, results) => {
+    connection.query('SELECT * from project_has_sponsor', (err, results) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération des employés');
+            res.status(500).send('Erreur lors de la récupération des données');
         } else {
             res.json(results);
         }
     });
 })
 Router.get('/:id', (req, res) => {
-    connection.query('SELECT * from club where id=?', req.params.id, (err, results) => {
+    connection.query('SELECT * from project_has_sponsor where id=?', req.params.id, (err, results) => {
         if (err) {
             res.status(500).send("Erreur lors de la récupération des données");
         } else {
@@ -22,7 +21,7 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
-    connection.query('INSERT into club SET ?', req.body, (err, results) => {
+    connection.query('INSERT into project_has_sponsor SET ?', req.body, (err, results) => {
         console.log(results);
         if (err) {
             console.log(err);
@@ -35,10 +34,10 @@ Router.post('/', (req, res) => {
 });
 
 Router.put('/:id', (req, res) => {
-    const idcontract = req.params.id;
+    const idquestion = req.params.id;
     const formData = req.body;
     formData.updated_at = new Date();
-    connection.query('UPDATE club SET ? WHERE id = ?', [formData, idcontract], (err, results) => {
+    connection.query('UPDATE project_has_sponsor SET ? WHERE id = ?', [formData, idquestion], (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Erreur lors de la modification des données");
@@ -49,7 +48,7 @@ Router.put('/:id', (req, res) => {
     })
 })
 Router.delete('/:id', (req, res) => {
-    connection.query('DELETE FROM club WHERE id =?', req.params.id, (err, results) => {
+    connection.query('DELETE FROM project_has_sponsor WHERE id =?', req.params.id, (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Erreur lors de la suppression");
@@ -60,13 +59,4 @@ Router.delete('/:id', (req, res) => {
     })
 })
 
-Router.get('/projet/:idclub', (req, res) => {
-    connection.query('select contract.name, contract.url_contract, contract.url_signed_contract from contract inner join club on contract.club_id = club.id where club.id = ?',req.params.idclub, (err, results) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la récupération des employés');
-        } else {
-            res.json(results);
-        }
-    });
-})
 module.exports = Router;
