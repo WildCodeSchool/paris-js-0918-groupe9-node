@@ -2,6 +2,9 @@ const express = require('express');
 const connection = require('../helper/conf.js');
 const Router = express.Router();
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 Router.get('/', (req, res) => {
     connection.query('SELECT * from club', (err, results) => {
@@ -30,8 +33,8 @@ Router.post('/', (req, res) => {
         }
         else {
             res.sendStatus(200);
-            }
-        })
+        }
+    })
 });
 
 Router.put('/:id', (req, res) => {
@@ -60,8 +63,13 @@ Router.delete('/:id', (req, res) => {
     })
 })
 
-Router.get('/projet/:idclub', (req, res) => {
-    connection.query('select contract.name, contract.url_contract, contract.url_signed_contract from contract inner join club on contract.club_id = club.id where club.id = ?',req.params.idclub, (err, results) => {
+Router.get('/contract/:idclub', (req, res) => {
+    connection.query('select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
+    from contract \
+    inner join club on contract.club_id = club.id \
+    left join `order` on contract.id = `order`.contract_id\
+    left join survey on contract.id = survey.contract_id\
+    where club.id = 1', req.params.idclub, (err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des employés');
         } else {
@@ -69,4 +77,21 @@ Router.get('/projet/:idclub', (req, res) => {
         }
     });
 })
+Router.post('/create', (req, res) => {
+    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+        let insertSqlQuery = 'INSERT INTO club (email, password, name) VALUES(?,?,?)';
+        let valuesToInsert = [req.body.email, hash, req.body.name];
+        connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+            console.log(results);
+            if (err) {
+                console.log(err);
+                res.status(500).send(`Erreur lors de l'insertion des données`);
+            }
+            else {
+                res.sendStatus(200);
+            }
+        })
+    }
+    
+)});
 module.exports = Router;

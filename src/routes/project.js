@@ -1,6 +1,8 @@
 const express = require('express');
 const connection = require('../helper/conf.js')
 const Router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'tmp/' });
 
 Router.get('/', (req, res) => {
     connection.query('SELECT * from project', (err, results) => {
@@ -30,8 +32,8 @@ Router.post('/', (req, res) => {
         }
         else {
             res.sendStatus(200);
-            }
-        })
+        }
+    })
 });
 // const project_id = results.insertId;
 //             connection.query('INSERT INTO project (project_id) VALUES ('+project_id+')', (err, results) => {
@@ -67,5 +69,26 @@ Router.delete('/:id', (req, res) => {
 
     })
 })
+Router.post('/uploaddufichier', upload.array('monfichier'), function (req, res, next) {
+    req.files.forEach(file => {
+        if (file.size > 1024 * 1024 * 3) {
+            res.status(400).send("File is too big!")
+            return;
+        };
 
+        if (!file.mimetype.includes('image/png,pdf')) {
+            res.status(400).send("File is not png!")
+            return;
+        };
+
+        fs.rename(file.path, 'public/images/' + file.originalname, function (err) {
+            if (err) {
+                res.send('problème durant le déplacement');
+            } else {
+                res.send('Fichier uploadé avec succès');
+            }
+        });
+    });
+
+})
 module.exports = Router;
