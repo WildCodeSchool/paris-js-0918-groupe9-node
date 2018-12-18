@@ -3,6 +3,22 @@ const connection = require('../helper/conf.js')
 const Router = express.Router();
 
 
+Router.get('/withProject', (req, res) => {
+    const sql = "SELECT a.id as sponsorId, a.name as sponsorName \
+    ,c.* FROM allsponsored.sponsor a \
+    left join allsponsored.project_has_sponsor b on a.id = b.sponsor_id \
+    left join allsponsored.project c on b.project_id = c.id \
+    ;";
+
+    connection.query(sql, (err, results) => {
+        if (err) {
+            res.status(500).send('Erreur lors de la récupération des données');
+        } else {
+            console.log(results);
+            res.json(results);
+        }
+    });
+})
 
 Router.get('/', (req, res) => {
     connection.query('SELECT * from sponsor', (err, results) => {
@@ -24,8 +40,8 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
+    console.log(req.body)
     connection.query('INSERT into sponsor SET ?', req.body, (err, results) => {
-        console.log(results);
         if (err) {
             console.log(err);
             res.status(500).send(`Erreur lors de l'insertion des données`);
@@ -68,22 +84,6 @@ Router.delete('/:id', (req, res) => {
         }
 
     })
-})
-Router.get('/withProject', (req, res) => {
-    const sql = "SELECT a.id as sponsorId, a.name as sponsorName \
-    ,c.* FROM allsponsored.sponsor a \
-    left join allsponsored.project_has_sponsor b on a.id = b.sponsor_id \
-    left join allsponsored.project c on b.project_id = c.id \
-    ;";
-
-    connection.query(sql, (err, results) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la récupération des données');
-        } else {
-            console.log(results);
-            res.json(results);
-        }
-    });
 })
 
 module.exports = Router;

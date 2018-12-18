@@ -4,15 +4,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-
+const user = require('./src/routes/user')
 const club = require('./src/routes/club');
 const sponsor = require('./src/routes/sponsor');
 const project = require('./src/routes/project');
-const user = require('./src/routes/user');
 const signin_club = require('./src/routes/signin_club');
 const signin_admin = require('./src/routes/signin_admin');
 const project_has_sponsor = require('./src/routes/project_has_sponsor');
-
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('./jwtSecret');
 
@@ -20,6 +18,8 @@ app.use(morgan("dev"));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/user", user);
+app.use("/club", club);
 
 
 
@@ -49,7 +49,6 @@ const authorize = function (req, res, next) {
             }
         })
     }
-
 }
 
 
