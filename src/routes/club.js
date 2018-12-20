@@ -7,7 +7,12 @@ const saltRounds = 10;
 
 
 Router.get('/', (req, res) => {
-    connection.query('SELECT * from club', (err, results) => {
+    connection.query('SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
+    FROM club\
+    INNER JOIN contract ON club.id = contract.club_id\
+    INNER JOIN `order` ON contract.id = `order`.contract_id \
+    INNER JOIN survey ON contract.id = survey.contract_id\
+    INNER JOIN `action`ON contract.id = `action`.contract_id', (err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des employés');
         } else {
