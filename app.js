@@ -34,7 +34,7 @@ const getToken = req => {
     return '';
 }
 
-const authorize = function (req, res, next) {
+const authorize = (req, res, next) => {
     const token = getToken(req);
     console.log(token);
     if (token === '') {
@@ -52,6 +52,7 @@ const authorize = function (req, res, next) {
     }
 
 }
+
 
 app.use('/signinclub', signin_club);
 app.use('/signinadmin', signin_admin);
