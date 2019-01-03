@@ -4,6 +4,7 @@ const Router = express.Router();
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const nodemailer = require("nodemailer");
 
 Router.get("/", (req, res) => {
   connection.query(
@@ -122,31 +123,54 @@ Router.get("/contract/:idclub", (req, res) => {
     inner join club on contract.club_id = club.id \
     left join `order` on contract.id = `order`.contract_id\
     left join survey on contract.id = survey.contract_id\
-    where club.id = 1",
-    req.params.idclub,
-    (err, results) => {
-      if (err) {
-        res.status(500).send("Erreur lors de la récupération des employés");
-      } else {
-        res.json(results);
-      }
-    }
-  );
-});
-Router.post("/create", (req, res) => {
-  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-    let insertSqlQuery =
-      "INSERT INTO club (email, password, name) VALUES(?,?,?)";
-    let valuesToInsert = [req.body.email, hash, req.body.name];
-    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
-      console.log(results);
-      if (err) {
-        console.log(err);
-        res.status(500).send(`Erreur lors de l'insertion des données`);
-      } else {
-        res.sendStatus(200);
-      }
+    where club.id = 1', req.params.idclub, (err, results) => {
+            if (err) {
+                res.status(500).send('Erreur lors de la récupération des employés');
+            } else {
+                res.json(results);
+            }
+        });
+})
+Router.post('/create', (req, res) => {
+    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+        let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
+        let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
+        connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+            console.log(results);
+            if (err) {
+                console.log(err);
+                res.status(500).send(`Erreur lors de l'insertion des données`);
+                
+            }
+            else {
+                res.sendStatus(200);
+                
+            }
+        })
     });
-  });
+    var smtpTransport = nodemailer.createTransport({
+        host: 'smtp.mailtrap.io',
+        port: 2525,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: "7a8075e4a6721f", // generated user
+            pass: "797fe7e2074020" // generated pass
+        }
+
+    });
+    smtpTransport.sendMail({
+        from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
+        to: req.body.email, // Destinataires
+        subject: "Hello granda !", // Sujet
+        text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
+        html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
+    }, (error, response) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Message sent: " + response.response);
+        }
+    });
+    
 });
 module.exports = Router;

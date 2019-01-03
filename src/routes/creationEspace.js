@@ -9,15 +9,15 @@ router.get('/creationespace', (req, res) => {
         port: 2525,
         secure: false, // true for 465, false for other ports
         auth: {
-            user: "name user", // generated user
-            pass: "password user" // generated pass
+            user:"7a8075e4a6721f", // generated user
+            pass: "797fe7e2074020" // generated pass
         }
 
     });
     smtpTransport.sendMail({
         from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
         to: req.email, // Destinataires
-        subject: "Hello granda !", // Sujet
+        subject: "Bienvenue à votre espace client !", // Sujet
         text: "Bonjour, Voici votre indetifiant et mot de pass pour votre espace club" + req.password + req.identifiant,
         html: "<b>Bonjour mamie, Tu peux me donner ton recette du gateau chiffron, Je t'aime</b>"
     }, (error, response) => {

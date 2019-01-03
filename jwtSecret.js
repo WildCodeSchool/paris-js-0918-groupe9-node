@@ -1,1 +1,1 @@
-module.exports = "mysecret1234"
+module.exports = process.env.JWT;

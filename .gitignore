@@ -60,7 +60,6 @@ typings/
 # next.js build output
 .next
 # ignore database
-
 conf.js
-
 node_modules
+
