@@ -21,6 +21,7 @@ Router.get('/:id', (req, res) => {
         }
     });
 })
+
 Router.post('/', (req, res) => {
     connection.query('INSERT into club SET ?', req.body, (err, results) => {
         console.log(results);

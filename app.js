@@ -12,6 +12,8 @@ const user = require('./src/routes/user');
 const signin_club = require('./src/routes/signin_club');
 const signin_admin = require('./src/routes/signin_admin');
 const project_has_sponsor = require('./src/routes/project_has_sponsor');
+const product_list = require('./src/routes/product');
+
 
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('./jwtSecret');
@@ -62,6 +64,7 @@ app.use("/sponsor", sponsor);
 //app.use("/project", authorize, project);
 app.use("/project", project);
 app.use('/project_has_sponsor',project_has_sponsor);
+app.use("/product", product_list);
 
 
 
