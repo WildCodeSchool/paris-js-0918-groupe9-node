@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `allsponsored`.`user` (
   `email` VARCHAR(100) NULL,
   `status` VARCHAR(45) NULL,
   `role` VARCHAR(45) NULL,
-  `password` VARCHAR(200) NULL,
+  `password` LONGTEXT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`))
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `allsponsored`.`club` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `address` VARCHAR(300) NULL,
   `email` VARCHAR(100) NULL,
-  `password` VARCHAR(200) NULL,
+  `password` LONGTEXT NULL,
   `name` VARCHAR(100) NULL,
   `phone` INT NULL,
   `url_logo` LONGTEXT NULL,

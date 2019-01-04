@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const nodemailer = require("nodemailer");
 
-Router.get('/all', (req, res) => {
+Router.get('/', (req, res) => {
   connection.query('SELECT * from club', (err, results) => {
       if (err) {
           res.status(500).send('Erreur lors de la récupération des employés');
@@ -16,9 +16,9 @@ Router.get('/all', (req, res) => {
   });
 })
 
-Router.get("/", (req, res) => {
+Router.get("/table", (req, res) => {
   connection.query(
-    "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
+    "SELECT club.id,club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
     LEFT JOIN contract ON club.id = contract.club_id\
     LEFT JOIN `order` ON contract.id = `order`.contract_id \
@@ -37,10 +37,10 @@ Router.get("/filtername", (req, res) => {
   connection.query(
     "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
-     JOIN contract ON club.id = contract.club_id\
-     JOIN `order` ON contract.id = `order`.contract_id \
-     JOIN survey ON contract.id = survey.contract_id\
-     JOIN `action` ON contract.id = `action`.contract_id\
+    LEFT JOIN contract ON club.id = contract.club_id\
+    LEFT JOIN `order` ON contract.id = `order`.contract_id \
+    LEFT JOIN survey ON contract.id = survey.contract_id\
+    LEFT JOIN `action` ON contract.id = `action`.contract_id\
     ORDER BY clubName ASC",
     (err, results) => {
       if (err) {
@@ -55,10 +55,10 @@ Router.get("/filterdate", (req, res) => {
     connection.query(
       "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
-       JOIN contract ON club.id = contract.club_id\
-       JOIN `order` ON contract.id = `order`.contract_id \
-       JOIN survey ON contract.id = survey.contract_id\
-       JOIN `action` ON contract.id = `action`.contract_id\
+      LEFT JOIN contract ON club.id = contract.club_id\
+      LEFT JOIN `order` ON contract.id = `order`.contract_id \
+      LEFT JOIN survey ON contract.id = survey.contract_id\
+      LEFT JOIN `action` ON contract.id = `action`.contract_id\
       ORDER BY club.updated_at DESC",
       (err, results) => {
         if (err) {
