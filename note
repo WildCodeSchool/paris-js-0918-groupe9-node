@@ -1,0 +1,13 @@
+retirer variable fully loaded;
+
+isLoaded: true (requete fetch)
+
+tableau club: -bouton ajouter club
+              -au click du club aller sur page du club
+
+left outer: requete SQL;
+
+
+admin-sponsor: inverser champs "ajouter un sponsor" et le input;
+
+

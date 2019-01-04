@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const nodemailer = require("nodemailer");
 
-Router.get("/", (req, res) => {
+Router.get("/table", (req, res) => {
   connection.query(
     "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
@@ -123,7 +123,7 @@ Router.get("/contract/:idclub", (req, res) => {
     inner join club on contract.club_id = club.id \
     left join `order` on contract.id = `order`.contract_id\
     left join survey on contract.id = survey.contract_id\
-    where club.id = 1', req.params.idclub, (err, results) => {
+    where club.id = 1", req.params.idclub, (err, results) => {
             if (err) {
                 res.status(500).send('Erreur lors de la récupération des employés');
             } else {
