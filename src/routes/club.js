@@ -6,14 +6,24 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const nodemailer = require("nodemailer");
 
-Router.get("/", (req, res) => {
+Router.get('/', (req, res) => {
+  connection.query('SELECT * from club', (err, results) => {
+      if (err) {
+          res.status(500).send('Erreur lors de la récupération des employés');
+      } else {
+          res.json(results);
+      }
+  });
+})
+
+Router.get("/table", (req, res) => {
   connection.query(
-    "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
+    "SELECT club.id,club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
-    JOIN contract ON club.id = contract.club_id\
-    JOIN `order` ON contract.id = `order`.contract_id \
-    JOIN survey ON contract.id = survey.contract_id\
-    JOIN `action`ON contract.id = `action`.contract_id",
+    LEFT JOIN contract ON club.id = contract.club_id\
+    LEFT JOIN `order` ON contract.id = `order`.contract_id \
+    LEFT JOIN survey ON contract.id = survey.contract_id\
+    LEFT JOIN `action`ON contract.id = `action`.contract_id",
     (err, results) => {
       if (err) {
         res.status(500).send("Erreur lors de la récupération des employés");
@@ -27,10 +37,10 @@ Router.get("/filtername", (req, res) => {
   connection.query(
     "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
-     JOIN contract ON club.id = contract.club_id\
-     JOIN `order` ON contract.id = `order`.contract_id \
-     JOIN survey ON contract.id = survey.contract_id\
-     JOIN `action` ON contract.id = `action`.contract_id\
+    LEFT JOIN contract ON club.id = contract.club_id\
+    LEFT JOIN `order` ON contract.id = `order`.contract_id \
+    LEFT JOIN survey ON contract.id = survey.contract_id\
+    LEFT JOIN `action` ON contract.id = `action`.contract_id\
     ORDER BY clubName ASC",
     (err, results) => {
       if (err) {
@@ -45,10 +55,10 @@ Router.get("/filterdate", (req, res) => {
     connection.query(
       "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
-       JOIN contract ON club.id = contract.club_id\
-       JOIN `order` ON contract.id = `order`.contract_id \
-       JOIN survey ON contract.id = survey.contract_id\
-       JOIN `action` ON contract.id = `action`.contract_id\
+      LEFT JOIN contract ON club.id = contract.club_id\
+      LEFT JOIN `order` ON contract.id = `order`.contract_id \
+      LEFT JOIN survey ON contract.id = survey.contract_id\
+      LEFT JOIN `action` ON contract.id = `action`.contract_id\
       ORDER BY club.updated_at DESC",
       (err, results) => {
         if (err) {
@@ -123,7 +133,7 @@ Router.get("/contract/:idclub", (req, res) => {
     inner join club on contract.club_id = club.id \
     left join `order` on contract.id = `order`.contract_id\
     left join survey on contract.id = survey.contract_id\
-    where club.id = 1', req.params.idclub, (err, results) => {
+    where club.id = 1", req.params.idclub, (err, results) => {
             if (err) {
                 res.status(500).send('Erreur lors de la récupération des employés');
             } else {
@@ -153,8 +163,8 @@ Router.post('/create', (req, res) => {
         port: 2525,
         secure: false, // true for 465, false for other ports
         auth: {
-            user: "7a8075e4a6721f", // generated user
-            pass: "797fe7e2074020" // generated pass
+            user: `${process.env.MAIL_USER}`, // generated user
+            pass: `${process.env.MAIL_PASSWORD}`// generated pass
         }
 
     });
