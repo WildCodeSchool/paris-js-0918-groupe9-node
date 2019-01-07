@@ -2,6 +2,10 @@ const express = require('express');
 const connection = require('../helper/conf.js')
 const Router = express.Router();
 
+const multer = require('multer');
+const upload = multer({ dest: 'tmp/' });
+const fs = require('fs');
+
 Router.get('/', (req, res) => {
     connection.query('SELECT * from contract', (err, results) => {
         if (err) {
@@ -32,15 +36,19 @@ Router.post('/', (req, res) => {
             }
         })
 });
-// const contract_id = results.insertId;
-//             connection.query('INSERT INTO contract (contract_id) VALUES ('+contract_id+')', (err, results) => {
-//                 if (err) {
-//                     console.log(err);
-//                     res.status(500).send(`Erreur lors de l'envoi d'un contract`);
-//                 }
-//                 else {
-//                     res.sendStatus(200);
-//                 }
+Router.post('/ajouteclub', (req, res) => {
+        let insertSqlQuery = 'INSERT INTO contract (project_id,club_id,name,url_contract) VALUES(?,?,?,?)';
+        let valuesToInsert = [req.body.project_id, req.body.club_id, req.body.name, req.body.url_contract];
+        connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send(`Erreur lors de l'insertion des données`);  
+            }
+            else {
+                res.sendStatus(200);
+            }
+        })
+    });
 Router.put('/:id', (req, res) => {
     const idcontract = req.params.id;
     const formData = req.body;
@@ -99,5 +107,14 @@ Router.get('/suvey/:idcontract', (req, res) => {
         }
     });
 })
+Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
 
+    fs.rename(req.file.path, 'public/files/' + req.file.originalname, function (err) {
+        if (err) {
+            res.send('problème durant le déplacement')
+        } else {
+            res.send(`http://localhost:3030/files/${req.file.originalname}`); 
+        }
+    });
+})
 module.exports = Router;
