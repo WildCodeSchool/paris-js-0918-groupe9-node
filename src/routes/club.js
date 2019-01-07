@@ -35,7 +35,7 @@ Router.get("/table", (req, res) => {
 });
 Router.get("/filtername", (req, res) => {
   connection.query(
-    "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
+    "SELECT club.id, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
     LEFT OUTER JOIN contract ON club.id = contract.club_id\
     LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
@@ -53,7 +53,7 @@ Router.get("/filtername", (req, res) => {
 });
 Router.get("/filterdate", (req, res) => {
     connection.query(
-      "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
+      "SELECT club.id, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
       LEFT OUTER JOIN contract ON club.id = contract.club_id\
       LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
