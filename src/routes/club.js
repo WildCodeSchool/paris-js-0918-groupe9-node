@@ -20,10 +20,10 @@ Router.get("/table", (req, res) => {
   connection.query(
     "SELECT club.id,club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
-    LEFT JOIN contract ON club.id = contract.club_id\
-    LEFT JOIN `order` ON contract.id = `order`.contract_id \
-    LEFT JOIN survey ON contract.id = survey.contract_id\
-    LEFT JOIN `action`ON contract.id = `action`.contract_id",
+    LEFT OUTER JOIN contract ON club.id = contract.club_id\
+    LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
+    LEFT OUTER JOIN survey ON contract.id = survey.contract_id\
+    LEFT OUTER JOIN `action`ON contract.id = `action`.contract_id",
     (err, results) => {
       if (err) {
         res.status(500).send("Erreur lors de la récupération des employés");
@@ -37,10 +37,10 @@ Router.get("/filtername", (req, res) => {
   connection.query(
     "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
-    LEFT JOIN contract ON club.id = contract.club_id\
-    LEFT JOIN `order` ON contract.id = `order`.contract_id \
-    LEFT JOIN survey ON contract.id = survey.contract_id\
-    LEFT JOIN `action` ON contract.id = `action`.contract_id\
+    LEFT OUTER JOIN contract ON club.id = contract.club_id\
+    LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
+    LEFT OUTER JOIN survey ON contract.id = survey.contract_id\
+    LEFT OUTER JOIN `action` ON contract.id = `action`.contract_id\
     ORDER BY clubName ASC",
     (err, results) => {
       if (err) {
@@ -55,10 +55,10 @@ Router.get("/filterdate", (req, res) => {
     connection.query(
       "SELECT club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
-      LEFT JOIN contract ON club.id = contract.club_id\
-      LEFT JOIN `order` ON contract.id = `order`.contract_id \
-      LEFT JOIN survey ON contract.id = survey.contract_id\
-      LEFT JOIN `action` ON contract.id = `action`.contract_id\
+      LEFT OUTER JOIN contract ON club.id = contract.club_id\
+      LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
+      LEFT OUTER JOIN survey ON contract.id = survey.contract_id\
+      LEFT OUTER JOIN `action` ON contract.id = `action`.contract_id\
       ORDER BY club.updated_at DESC",
       (err, results) => {
         if (err) {
@@ -133,7 +133,7 @@ Router.get("/contract/:idclub", (req, res) => {
     inner join club on contract.club_id = club.id \
     left join `order` on contract.id = `order`.contract_id\
     left join survey on contract.id = survey.contract_id\
-    where club.id = 1", req.params.idclub, (err, results) => {
+    where club.id = ?", req.params.idclub, (err, results) => {
             if (err) {
                 res.status(500).send('Erreur lors de la récupération des employés');
             } else {
@@ -171,7 +171,7 @@ Router.post('/create', (req, res) => {
     smtpTransport.sendMail({
         from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
         to: req.body.email, // Destinataires
-        subject: "Hello granda !", // Sujet
+        subject: "Bienvenue au Allsponsored!", // Sujet
         text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
         html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
     }, (error, response) => {
