@@ -55,6 +55,7 @@ Router.put('/:id', (req, res) => {
 
     })
 })
+
 Router.delete('/:id', (req, res) => {
     connection.query('DELETE FROM product WHERE id =?', req.params.id, (err, results) => {
         if (err) {

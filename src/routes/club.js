@@ -64,7 +64,20 @@ Router.get("/filterdate", (req, res) => {
         if (err) {
           res.status(500).send("Erreur lors de la récupération des employés");
         } else {
+            res.json(results);
+        }
+    });
+})
+
+Router.post('/', (req, res) => {
+    connection.query('INSERT into club SET ?', req.body, (err, results) => {
+        console.log(results);
+        if (err) {
+            console.log(err);
+            res.status(500).send(`Erreur lors de l'insertion des données`);
+}else {
           res.json(results);
+
         }
       }
     );
