@@ -1,1 +1,3 @@
-module.exports = "mysecret1234"
+require('dotenv').config();
+
+module.exports = process.env.JWT;

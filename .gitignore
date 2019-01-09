@@ -60,4 +60,5 @@ typings/
 # next.js build output
 .next
 # ignore database
-src/helper/conf.js
+node_modules
+

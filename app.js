@@ -11,7 +11,12 @@ const project = require('./src/routes/project');
 const user = require('./src/routes/user');
 const signin_club = require('./src/routes/signin_club');
 const signin_admin = require('./src/routes/signin_admin');
+
 const project_has_sponsor = require('./src/routes/project_has_sponsor');
+const product_list = require('./src/routes/product');
+
+const contract = require('./src/routes/contract');
+
 
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('./jwtSecret');
@@ -20,6 +25,7 @@ app.use(morgan("dev"));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 
 
@@ -33,7 +39,7 @@ const getToken = req => {
     return '';
 }
 
-const authorize = function (req, res, next) {
+const authorize = (req, res, next) => {
     const token = getToken(req);
     console.log(token);
     if (token === '') {
@@ -61,7 +67,9 @@ app.use("/sponsor", sponsor);
 // app.use("/sponsor", authorize, sponsor);
 //app.use("/project", authorize, project);
 app.use("/project", project);
+app.use('/contract', contract);
 app.use('/project_has_sponsor',project_has_sponsor);
+app.use("/product", product_list);
 
 
 

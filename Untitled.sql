@@ -29,13 +29,12 @@ CREATE TABLE IF NOT EXISTS `allsponsored`.`user` (
   `email` VARCHAR(100) NULL,
   `status` VARCHAR(45) NULL,
   `role` VARCHAR(45) NULL,
-  `password` LONGTEXT NULL,
+  `password` VARCHAR(45) NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-INSERT INTO `allsponsored`.`user` (`last_name`, `first_name`, `email`, `status`, `role`, `password`) VALUES ('Lucereau', 'Steven', 'stevens.lucereau@allsponsored.com ', 'active', 'admin', '12345');
 
 -- -----------------------------------------------------
 -- Table `allsponsored`.`project`
@@ -71,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `allsponsored`.`club` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `address` VARCHAR(300) NULL,
   `email` VARCHAR(100) NULL,
-  `password` LONGTEXT NULL,
+  `password` VARCHAR(45) NULL,
   `name` VARCHAR(100) NULL,
   `phone` INT NULL,
   `url_logo` LONGTEXT NULL,
