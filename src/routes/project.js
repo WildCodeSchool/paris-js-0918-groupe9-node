@@ -2,7 +2,8 @@ const express = require('express');
 const connection = require('../helper/conf.js')
 const Router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'tmp/' });
+const mime = require('mime');
+// const upload = multer({ dest: 'tmp/' });
 const fs = require('fs');
 
 
@@ -26,7 +27,7 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
-    const values = [req.body.user_id, req.body.name, req.body.status,req.body.visual_shirt,req.body.url_summary]
+    const values = [req.body.user_id, req.body.name, req.body.status, req.body.visual_shirt, req.body.url_summary]
     const sql = 'INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)'
     connection.query(sql, values, (err, results) => {
         // console.log(results);
@@ -80,38 +81,72 @@ Router.delete('/:id', (req, res) => {
     })
 })
 
-Router.post('/uploaddesfichier', upload.array('monfichier'), function (req, res, next) {
-    req.files.forEach(file => {
-        // if (file.size > 1024 * 1024 * 3) {
-        //     res.status(400).send("File is too big!")
-        //     return;
-        // };
+// Router.post('/uploaddesfichier', upload.array('files'), function (req, res, next) {
+//     console.log(req.files);
+//     req.files.forEach(file => {
+//         fs.rename(file.path, 'public/files/' + file.originalname, function (err) {
+//             if (err) {
+//                 res.send('problème durant le déplacement'); 
+                
+//             } else {
+//                 res.send(`http://localhost:3030/files/${file.originalname}`);
+//             }
+//         });
+//     });
 
-        // if (!file.mimetype.includes('image/png,pdf')) {
-        //     res.status(400).send("File is not png!")
-        //     return;
-        // };
-        fs.rename(file.path, 'public/images/' + file.originalname, function (err) {
-            if (err) {
-                res.send('problème durant le déplacement');
-                res.end();
-            } else {
-                res.sendStatus(200).send('Fichier uploadé avec succès');
-                res.end();
-            }
-        });
-    });
+// });
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/files')
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + '.' + mime.getExtension(file.mimetype))
+  }
 })
+const upload = multer({
+  dest: 'tmp/',
+  storage
+});
 
-Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
-    console.log(req.file)
-    fs.rename(req.file.path, 'public/files/' + req.file.originalname, function (err) {
+Router.post('/uploaddesfichier', upload.any(), (req, res, next) => {
+  console.log(req.files, req.body);
+  if (req.files && req.files[0] && req.files[1]) {
+      const sql = `INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)`;
+      const value = [req.body.user_id,req.body.name,req.body.status, req.files[0].path.replace('public',''), req.files[1].path.replace('public','')];
+    connection.query(sql,value, (err, results) => {
         if (err) {
-            res.send('problème durant le déplacement')
-        } else {
-            res.send(`http://localhost:3030/files/${req.file.originalname}`); 
+            console.log(err);
+            res.status(500).send(`Erreur lors de l'insertion des données`);
+            res.end();
         }
-    });
-})
+        else {
+            const project_id = results.insertId;
+            connection.query('INSERT INTO project_has_sponsor (project_id, sponsor_id) VALUES (?,?)', [project_id, req.body.sponsor_id], (err, results) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send(`Erreur lors de l'envoi d'un project`);
+                    res.end();
+                }
+                else {
+                    res.sendStatus(200);
+                    res.end();
+                }
+            });
+        }
+    })
+      
+ }});
+// Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
+//     console.log(req.file)
+//     fs.rename(req.file.path, 'public/files/' + req.file.originalname, function (err) {
+//         if (err) {
+//             res.send('problème durant le déplacement')
+//         } else {
+//             res.send(`http://localhost:3030/files/${req.file.originalname}`); 
+//         }
+//     });
+// })
 
 module.exports = Router;

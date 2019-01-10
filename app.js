@@ -17,6 +17,8 @@ const product_list = require('./src/routes/product');
 
 const contract = require('./src/routes/contract');
 
+const order_has_product = require('./src/routes/order_has_product');
+
 
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('./jwtSecret');
@@ -25,7 +27,7 @@ app.use(morgan("dev"));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static('/'));
 
 
 
@@ -70,6 +72,7 @@ app.use("/project", project);
 app.use('/contract', contract);
 app.use('/project_has_sponsor',project_has_sponsor);
 app.use("/product", product_list);
+app.use ("/order_has_product",order_has_product);
 
 
 
