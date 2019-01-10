@@ -20,6 +20,21 @@ Router.get('/:id', (req, res) => {
         }
     });
 })
+
+Router.get('/:id/details', (req, res) => {
+    const sql = "SELECT `order`.id as orderId, product.name as productName, order_has_product.quantity, order_has_product.color, order_has_product.size from `order`\
+    JOIN order_has_product ON `order`.id = order_has_product.order_id\
+    JOIN product ON product.id = order_has_product.product_id\
+    WHERE `order`.id = ?;"
+    connection.query(sql, req.params.id, (err, results) => {
+        if (err) {
+            res.status(500).send("Erreur lors de la récupération des données");
+        } else {
+            res.json(results);
+        }
+    });
+})
+
 Router.post('/', (req, res) => {
     connection.query('INSERT into order SET ?', req.body, (err, results) => {
         console.log(results);
