@@ -41,11 +41,13 @@ Router.put('/:id',
         const formData = req.body;
         console.log(formData)
         connection.query('UPDATE user SET ? WHERE id = ?', [formData, idUser], (err, results) => {
+            console.log(req.body)
             if (err) {
                 console.log(err);
                 res.status(500).send("Erreur lors de la modification des données");
             } else {
                 res.sendStatus(200);
+                
             }
 
         })

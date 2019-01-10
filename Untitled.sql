@@ -336,3 +336,10 @@ CREATE INDEX `fk_contract_has_product_contract1_idx` ON `allsponsored`.`contract
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+ALTER TABLE `allsponsored`.`user` 
+ADD COLUMN `adress` VARCHAR(45) NULL AFTER `updated_at`;
+
+ALTER TABLE `allsponsored`.`user` 
+ADD COLUMN `phone` INT NULL AFTER `adress`;
