@@ -18,7 +18,7 @@ const product_list = require('./src/routes/product');
 const contract = require('./src/routes/contract');
 
 const order_has_product = require('./src/routes/order_has_product');
-
+const contract_has_product = require('./src/routes/contract_has_product');
 
 
 const jwt = require("jsonwebtoken");
@@ -74,6 +74,7 @@ app.use("/order", order);
 app.use("/project_has_sponsor", project_has_sponsor);
 app.use("/product", product_list);
 app.use ("/order_has_product",order_has_product);
+app.use("/contract_has_product",contract_has_product)
 
 app.get("/", (req, res) => {
   res.send("Start allsponsored");
