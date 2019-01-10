@@ -11,11 +11,11 @@ const Router = express.Router();
 //         }
 //     });
 // })
-Router.get('/', (req, res) => {
+Router.get('/idcontract', (req, res) => {
     connection.query('select product.name from contract_has_product \
     inner join contract on contract.id= contract_has_product.contract_id \
     inner join product on product.id = contract_has_product.product_id \
-    where contract_id=?', req.body.contract_id,(err, results) => {
+    where contract_id=?', req.params.idcontract,(err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des données');
         } else {
