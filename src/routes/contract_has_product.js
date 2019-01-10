@@ -2,16 +2,16 @@ const express = require('express');
 const connection = require('../helper/conf.js')
 const Router = express.Router();
 
+// Router.get('/', (req, res) => {
+//     connection.query('SELECT * from contract_has_product', (err, results) => {
+//         if (err) {
+//             res.status(500).send('Erreur lors de la récupération des données');
+//         } else {
+//             res.json(results);
+//         }
+//     });
+// })
 Router.get('/', (req, res) => {
-    connection.query('SELECT * from contract_has_product', (err, results) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la récupération des données');
-        } else {
-            res.json(results);
-        }
-    });
-})
-Router.get('/contract-has-product', (req, res) => {
     connection.query('select product.name from contract_has_product \
     inner join contract on contract.id= contract_has_product.contract_id \
     inner join product on product.id = contract_has_product.product_id \
