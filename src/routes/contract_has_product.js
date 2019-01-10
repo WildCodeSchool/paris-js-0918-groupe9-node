@@ -3,7 +3,7 @@ const connection = require('../helper/conf.js')
 const Router = express.Router();
 
 Router.get('/', (req, res) => {
-    connection.query('SELECT * from user', (err, results) => {
+    connection.query('SELECT * from contract_has_product', (err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des données');
         } else {
@@ -12,7 +12,7 @@ Router.get('/', (req, res) => {
     });
 })
 Router.get('/:id', (req, res) => {
-    connection.query('SELECT * from user where id=?', req.params.id, (err, results) => {
+    connection.query('SELECT * from contract_has_product where id=?', req.params.id, (err, results) => {
         if (err) {
             res.status(500).send("Erreur lors de la récupération des données");
         } else {
@@ -21,39 +21,34 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
-    connection.query('INSERT into user SET ?', req.body, (err, results) => {
+    connection.query('INSERT into contract_has_product SET ?', req.body, (err, results) => {
+        console.log(results);
         if (err) {
             console.log(err);
             res.status(500).send(`Erreur lors de l'insertion des données`);
         }
         else {
             res.sendStatus(200);
-        }
-    })
-});
-Router.put('/:id',
-    (req, res, next) => {
-        req.body.updated_at = new Date();
-        next();
-    },
-    (req, res) => {
-        const idUser = req.params.id;
-        const formData = req.body;
-        console.log(formData)
-        connection.query('UPDATE user SET ? WHERE id = ?', [formData, idUser], (err, results) => {
-            console.log(req.body)
-            if (err) {
-                console.log(err);
-                res.status(500).send("Erreur lors de la modification des données");
-            } else {
-                res.sendStatus(200);
-                
             }
-
         })
+});
+
+Router.put('/:id', (req, res) => {
+    const idaction = req.params.id;
+    const formData = req.body;
+    formData.updated_at = new Date();
+    connection.query('UPDATE contract_has_product SET ? WHERE id = ?', [formData, idaction], (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Erreur lors de la modification des données");
+        } else {
+            res.sendStatus(200);
+        }
+
     })
+})
 Router.delete('/:id', (req, res) => {
-    connection.query('DELETE FROM user WHERE id =?', req.params.id, (err, results) => {
+    connection.query('DELETE FROM contract_has_product WHERE id =?', req.params.id, (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Erreur lors de la suppression");
