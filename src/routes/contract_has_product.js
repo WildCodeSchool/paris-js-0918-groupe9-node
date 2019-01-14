@@ -33,7 +33,13 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
-    connection.query('INSERT into contract_has_product SET ?', req.body, (err, results) => {
+    const values = req.body.products.map(product => {
+        return (
+            [req.body.contract_id,product]
+        )
+    })
+    const sql = 'INSERT into contract_has_product (contract_id,product_id) values ?' 
+    connection.query(sql,[values], (err, results) => {
         console.log(results);
         if (err) {
             console.log(err);

@@ -81,63 +81,51 @@ Router.delete('/:id', (req, res) => {
     })
 })
 
-// Router.post('/uploaddesfichier', upload.array('files'), function (req, res, next) {
-//     console.log(req.files);
-//     req.files.forEach(file => {
-//         fs.rename(file.path, 'public/files/' + file.originalname, function (err) {
-//             if (err) {
-//                 res.send('problème durant le déplacement'); 
-                
-//             } else {
-//                 res.send(`http://localhost:3030/files/${file.originalname}`);
-//             }
-//         });
-//     });
-
-// });
-
-
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './public/files')
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + '.' + mime.getExtension(file.mimetype))
-  }
+    destination: (req, file, cb) => {
+        cb(null, './public/files')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + '.' + mime.getExtension(file.mimetype))
+    }
 })
 const upload = multer({
-  dest: 'tmp/',
-  storage
+    dest: 'tmp/',
+    storage
 });
 
 Router.post('/uploaddesfichier', upload.any(), (req, res, next) => {
-  console.log(req.files, req.body);
-  if (req.files && req.files[0] && req.files[1]) {
-      const sql = `INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)`;
-      const value = [req.body.user_id,req.body.name,req.body.status, req.files[0].path.replace('public',''), req.files[1].path.replace('public','')];
-    connection.query(sql,value, (err, results) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send(`Erreur lors de l'insertion des données`);
-            res.end();
-        }
-        else {
-            const project_id = results.insertId;
-            connection.query('INSERT INTO project_has_sponsor (project_id, sponsor_id) VALUES (?,?)', [project_id, req.body.sponsor_id], (err, results) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send(`Erreur lors de l'envoi d'un project`);
-                    res.end();
-                }
-                else {
-                    res.sendStatus(200);
-                    res.end();
-                }
-            });
-        }
-    })
-      
- }});
+    console.log(req.files, req.body);
+    if (req.files && req.files[0] && req.files[1]) {
+        const sql = `INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)`;
+        const value = [req.body.user_id, req.body.name, req.body.status, req.files[0].path.replace('public', ''), req.files[1].path.replace('public', '')];
+        connection.query(sql, value, (err, results) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send(`Erreur lors de l'insertion des données`);
+                res.end();
+            }
+            else {
+                const project_id = results.insertId;
+                connection.query('INSERT INTO project_has_sponsor (project_id, sponsor_id) VALUES (?,?)', [project_id, req.body.sponsor_id], (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send(`Erreur lors de l'envoi d'un project`);
+                        res.end();
+                    }
+                    else {
+                        res.sendStatus(200);
+                        res.end();
+                    }
+                });
+            }
+        })
+
+    }
+    else {
+        res.sendStatus(206);
+    }
+});
 // Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
 //     console.log(req.file)
 //     fs.rename(req.file.path, 'public/files/' + req.file.originalname, function (err) {
