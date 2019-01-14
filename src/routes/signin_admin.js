@@ -1,10 +1,12 @@
-const express = require('express');
-const connection = require('../helper/conf.js');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
+const express = require("express");
+const connection = require("../helper/conf.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Router = express.Router();
-const jwtSecret = require('../../jwtSecret');
+const jwtSecret = require("../../jwtSecret");
+
 
 Router.post('/', (req, res) => {
     connection.query('select password,id from user where email = ?', req.body.email, (err, results) => {
@@ -34,5 +36,6 @@ Router.post('/', (req, res) => {
     }
 })
 })
+
 
 module.exports = Router;
