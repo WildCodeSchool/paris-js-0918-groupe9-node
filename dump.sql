@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `allsponsored`.`user` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-INSERT INTO `allsponsored`.`user` (`last_name`, `first_name`, `email`, `status`, `role`, `password`) VALUES ('Lucereau', 'Steven', 'stevens.lucereau@allsponsored.com ', 'active', 'admin', '$2b$10$gGNPsAuhSaCHvF2vWfM6wOf0OmePV/2BKBlAdO7XLd/LFSCxkfRx2');
+INSERT INTO `allsponsored`.`user` (`last_name`, `first_name`, `email`, `status`, `role`, `password`) VALUES ('Lucereau', 'Steven', 'stevens.lucereau@allsponsored.com ', 'active', 'admin', '12345');
 
 -- -----------------------------------------------------
 -- Table `allsponsored`.`project`
