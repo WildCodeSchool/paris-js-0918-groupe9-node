@@ -198,16 +198,4 @@ Router.post('/create', (req, res) => {
 
 });
 
-// Router.post('/coucou', (req, res) => {
-//   bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-//       if (err) {
-//         console.log(err);
-//         res.status(500).send(`Erreur lors de l'insertion des données`);
-//       }
-//       else {
-//         res.status(200).send(hash);
-//       }
-//     })
-//   });
-
 module.exports = Router;
