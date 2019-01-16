@@ -56,6 +56,34 @@ Router.post('/', (req, res) => {
 //                 else {
 //                     res.sendStatus(200);
 //                 }
+
+Router.post('/:idcontract', (req, res) => {
+    connection.query('INSERT into `order` (contract_id) values (?)', req.params.idcontract, (err, results) => {
+        console.log(results);
+        if (err) {
+            console.log(err);
+            res.status(500).send(`Erreur lors de l'insertion des données`);
+        }
+        else {
+            req.body.products.map(product => {
+                const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
+                const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
+                connection.query(sql, value, (err, results) => {
+                    console.log(results);
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send(`Erreur lors de l'insertion des données`);
+                    }
+                    else {
+                        res.sendStatus(200);
+                    }
+                })
+            }
+            )
+            }
+        })
+});
+
 Router.put('/:id', (req, res) => {
     const idorder = req.params.id;
     const formData = req.body;

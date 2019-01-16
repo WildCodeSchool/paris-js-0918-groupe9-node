@@ -67,7 +67,7 @@ app.use("/sponsor",authorize, sponsor);
 
 app.use("/project",authorize,project);
 app.use("/contract",authorize, contract);
-app.use("/order", authorize,order);
+app.use("/order",authorize,order);
 app.use("/project_has_sponsor",authorize, project_has_sponsor);
 app.use("/product",authorize,product_list);
 app.use("/order_has_product",authorize, order_has_product);
