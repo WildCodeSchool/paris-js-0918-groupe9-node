@@ -8,11 +8,11 @@ const nodemailer = require("nodemailer");
 
 Router.get('/', (req, res) => {
   connection.query('SELECT * from club', (err, results) => {
-      if (err) {
-          res.status(500).send('Erreur lors de la récupération des employés');
-      } else {
-          res.json(results);
-      }
+    if (err) {
+      res.status(500).send('Erreur lors de la récupération des employés');
+    } else {
+      res.json(results);
+    }
   });
 })
 
@@ -53,36 +53,36 @@ Router.get("/filtername", (req, res) => {
 });
 
 Router.get("/filterdate", (req, res) => {
-    connection.query(
-      "SELECT club.id as clubId, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, `order`.id as orderId, survey.status as surveyStatus, `action`.name as actionName\
+  connection.query(
+    "SELECT club.id as clubId, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, `order`.id as orderId, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
       LEFT OUTER JOIN contract ON club.id = contract.club_id\
       LEFT OUTER JOIN `order` ON contract.id = `order`.contract_id \
       LEFT OUTER JOIN survey ON contract.id = survey.contract_id\
       LEFT OUTER JOIN `action` ON contract.id = `action`.contract_id\
       ORDER BY club.updated_at DESC",
-      (err, results) => {
-        if (err) {
-          res.status(500).send("Erreur lors de la récupération des employés");
-        } else {
-            res.json(results);
-        }
+    (err, results) => {
+      if (err) {
+        res.status(500).send("Erreur lors de la récupération des employés");
+      } else {
+        res.json(results);
+      }
     });
 })
 
 Router.post('/', (req, res) => {
-    connection.query('INSERT into club SET ?', req.body, (err, results) => {
-        console.log(results);
-        if (err) {
-            console.log(err);
-            res.status(500).send(`Erreur lors de l'insertion des données`);
-}else {
-          res.json(results);
+  connection.query('INSERT into club SET ?', req.body, (err, results) => {
+    console.log(results);
+    if (err) {
+      console.log(err);
+      res.status(500).send(`Erreur lors de l'insertion des données`);
+    } else {
+      res.json(results);
 
-        }
-      }
-    );
-  });
+    }
+  }
+  );
+});
 Router.get("/:id", (req, res) => {
   connection.query(
     "SELECT * from club where id=?",
@@ -148,54 +148,54 @@ Router.get("/contract/:idclub", (req, res) => {
     left join `order` on contract.id = `order`.contract_id\
     left join survey on contract.id = survey.contract_id\
     where club.id = ?", req.params.idclub, (err, results) => {
-            if (err) {
-                res.status(500).send('Erreur lors de la récupération des employés');
-            } else {
-                res.json(results);
-            }
-        });
+      if (err) {
+        res.status(500).send('Erreur lors de la récupération des employés');
+      } else {
+        res.json(results);
+      }
+    });
 })
 Router.post('/create', (req, res) => {
-    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-        let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
-        let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
-        connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
-            console.log(results);
-            if (err) {
-                console.log(err);
-                res.status(500).send(`Erreur lors de l'insertion des données`);
-                
-            }
-            else {
-                res.sendStatus(200);
-                
-            }
-        })
-    });
-    var smtpTransport = nodemailer.createTransport({
-        host: 'smtp.mailtrap.io',
-        port: 2525,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: `${process.env.MAIL_USER}`, // generated user
-            pass: `${process.env.MAIL_PASSWORD}`// generated pass
-        }
+  bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+    let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
+    let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
+    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+      console.log(results);
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de l'insertion des données`);
 
-    });
-    smtpTransport.sendMail({
-        from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
-        to: req.body.email, // Destinataires
-        subject: "Bienvenue au Allsponsored!", // Sujet
-        text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
-        html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
-    }, (error, response) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log("Message sent: " + response.response);
-        }
-    });
-    
+      }
+      else {
+        res.sendStatus(200);
+
+      }
+    })
+  });
+  var smtpTransport = nodemailer.createTransport({
+    host: 'smtp.mailtrap.io',
+    port: 2525,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: `${process.env.MAIL_USER}`, // generated user
+      pass: `${process.env.MAIL_PASSWORD}`// generated pass
+    }
+
+  });
+  smtpTransport.sendMail({
+    from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
+    to: req.body.email, // Destinataires
+    subject: "Bienvenue au Allsponsored!", // Sujet
+    text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
+    html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
+  }, (error, response) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Message sent: " + response.response);
+    }
+  });
+
 });
 
 module.exports = Router;
