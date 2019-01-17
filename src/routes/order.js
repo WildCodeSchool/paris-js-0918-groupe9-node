@@ -44,8 +44,8 @@ Router.post('/', (req, res) => {
         }
         else {
             res.sendStatus(200);
-            }
-        })
+        }
+    })
 });
 // const order_id = results.insertId;
 //             connection.query('INSERT INTO order (order_id) VALUES ('+order_id+')', (err, results) => {
@@ -57,6 +57,7 @@ Router.post('/', (req, res) => {
 //                     res.sendStatus(200);
 //                 }
 
+
 Router.post('/:idcontract', (req, res) => {
     connection.query('INSERT into `order` (contract_id) values (?)', req.params.idcontract, (err, results) => {
         console.log(results);
@@ -65,24 +66,40 @@ Router.post('/:idcontract', (req, res) => {
             res.status(500).send(`Erreur lors de l'insertion des données`);
         }
         else {
-            req.body.products.map(product => {
-                const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
-                const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
-                connection.query(sql, value, (err, results) => {
-                    console.log(results);
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send(`Erreur lors de l'insertion des données`);
-                    }
-                    else {
-                        res.sendStatus(200);
-                    }
-                })
+            let promises = [];
+            if (req.body.products) {
+                req.body.products.map(product => {
+                    const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
+                    const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
+                    promises.push(new Promise((resolve, reject) => {
+
+                        connection.query(sql, value, (err, results) => {
+                            if (err) {
+                                console.log(err);
+                                reject(err);
+
+                            }
+                            else {
+                                resolve(results);
+
+                            }
+
+                        }
+                        )
+                    })
+                    )
+                });
+            } else {
+                return res.send(404);
             }
-            )
-            }
-        })
+            Promise
+                .all(promises)
+                .then(() => res.sendStatus(200))
+                .catch(err => console.log(err));
+        }
+    })
 });
+
 
 Router.put('/:id', (req, res) => {
     const idorder = req.params.id;
