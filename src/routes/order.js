@@ -72,7 +72,6 @@ Router.post('/:idcontract', (req, res) => {
                     const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
                     const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
                     promises.push(new Promise((resolve, reject) => {
-
                         connection.query(sql, value, (err, results) => {
                             if (err) {
                                 console.log(err);
@@ -81,9 +80,7 @@ Router.post('/:idcontract', (req, res) => {
                             }
                             else {
                                 resolve(results);
-
                             }
-
                         }
                         )
                     })
@@ -99,7 +96,6 @@ Router.post('/:idcontract', (req, res) => {
         }
     })
 });
-
 
 Router.put('/:id', (req, res) => {
     const idorder = req.params.id;

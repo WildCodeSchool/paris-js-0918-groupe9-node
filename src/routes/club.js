@@ -159,43 +159,49 @@ Router.post('/create', (req, res) => {
   bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
     let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
     let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
-    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
-      console.log(results);
-      if (err) {
-        console.log(err);
-        res.status(500).send(`Erreur lors de l'insertion des données`);
+    if (req.body.email && req.body.name && req.body.address) {
+      connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+        console.log(results);
+        if (err) {
+          console.log(err);
+          res.status(500).send(`Erreur lors de l'insertion des données`);
 
-      }
-      else {
-        res.sendStatus(200);
+        }
+        else {
+          if (req.body.email)
+          var smtpTransport = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: `${process.env.USER_GMAIL} `,
+                pass: `${process.env.PASS_GMAIL}`
+            }
 
-      }
-    })
-  });
-  var smtpTransport = nodemailer.createTransport({
-    host: 'smtp.mailtrap.io',
-    port: 2525,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: `${process.env.MAIL_USER}`, // generated user
-      pass: `${process.env.MAIL_PASSWORD}`// generated pass
+        });
+          smtpTransport.sendMail({
+            from: "gmail", // Expediteur
+            to: req.body.email, // Destinataires
+            subject: "Bienvenue au Allsponsored!", // Sujet
+            text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
+            html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
+          }, (error, response) => {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Message sent: " + response.response);
+            }
+          });
+          res.sendStatus(200);
+
+        }
+      });
     }
-
-  });
-  smtpTransport.sendMail({
-    from: "e55a69bcaa-0fb124@inbox.mailtrap.io", // Expediteur
-    to: req.body.email, // Destinataires
-    subject: "Bienvenue au Allsponsored!", // Sujet
-    text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
-    html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
-  }, (error, response) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Message sent: " + response.response);
+    else if (!req.body.email || !req.body.name || !req.body.address) {
+      res.sendStatus(206)
+    }
+    else {
+      res.sendStatus(400);
     }
   });
-
 });
 
 module.exports = Router;
