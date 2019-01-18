@@ -46,63 +46,53 @@ Router.post('/', (req, res) => {
 		}
 	})
 });
-// const order_id = results.insertId;
-//             connection.query('INSERT INTO order (order_id) VALUES ('+order_id+')', (err, results) => {
-//                 if (err) {
-//                     console.log(err);
-//                     res.status(500).send(`Erreur lors de l'envoi d'un order`);
-//                 }
-//                 else {
-//                     res.sendStatus(200);
-//                 }
-// Router.post('/:idcontract', (req, res) => {
-//     connection.query('INSERT into `order` (contract_id, delivery_address) values (?,?)', [req.params.idcontract,delivery_address], (err, results) => {
-//         console.log(results);
-//         if (err) {
-//             console.log(err);
-//             res.status(500).send(`Erreur lors de l'insertion des données`);
-//         }
-//         else {
-//             req.body.products.map(product => {
-//                 const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
-//                 const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
-//                 connection.query(sql, value, (err, results) => {
-//                     console.log(results);
-//                     if (err) {
-//                         console.log(err);
-//                         res.status(500).send(`Erreur lors de l'insertion des données`);
-//                     }
-//                     else {
-//                         res.sendStatus(200);
-//                     }
-//                 })
-//             }
-//             )
-//             }
-//         })
-// });
+
 Router.post('/:idcontract', (req, res) => {
-	connection.query('INSERT into `order` (contract_id) values (?)', req.params.idcontract, (err, results) => {
-		console.log(results);
-		if (err) {
-			res.status(500).send(`Erreur lors de l'insertion des données`);
-		} else {
-			req.body.product.map(product => {
-				const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
-				const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
-				connection.query(sql, value, (err, results) => {
-					console.log(results);
-					if (err) {
-						console.log(err);
-						res.status(500).send(`Erreur lors de l'insertion des données`);
+	console.log(req.body)
+	connection.query("INSERT into `order` (contract_id, delivery_address) values (?,?)", [req.params.idcontract,req.body.products[0].deliveryAdress], (err, results) => {
+			console.log(results);
+			if (err) {
+					console.log(err);
+					res.status(500).send(`Erreur lors de l'insertion des données`);
+			}
+			else {
+					let promises = [];
+					if(req.body.products){
+							req.body.products.map(product => {
+									const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
+									const value = [product.product_id, results.insertId, product.quantity, product.size, product.color]
+									promises.push(new Promise((resolve, reject) => {
+
+											connection.query(sql, value, (err, results) => {
+													if (err) {
+															console.log(err);
+															reject(err);
+
+													}
+													else {
+															resolve(results);
+
+													}
+
+											}
+											)
+									})
+									)
+							}); 
 					} else {
-						res.sendStatus(200);
+							return res.send(404);
 					}
-				})
-			})
-		}
+					
+
+					Promise
+							.all(promises)
+							.then(() => res.sendStatus(200))
+							.catch(err => console.log(err));
+			}
 	})
 });
+
+
 Router.put('/:id', (req, res) => {
 	const idorder = req.params.id;
 	const formData = req.body;

@@ -57,7 +57,7 @@ const authorize = (req, res, next) => {
   }
 };
 
-app.use("/signinclub",signin_club);
+app.use("/signinclub", signin_club);
 app.use("/signinadmin", signin_admin);
 app.use("/user", user);
 app.use("/club", club);
@@ -65,11 +65,11 @@ app.use("/sponsor", sponsor);
 // app.use("/sponsor", authorize, sponsor);
 //app.use("/project", authorize, project);
 
-app.use("/project",project);
+app.use("/project", project);
 app.use("/contract", contract);
 app.use("/order", order);
 app.use("/project_has_sponsor", project_has_sponsor);
-app.use("/product",product_list);
+app.use("/product", product_list);
 app.use("/order_has_product", order_has_product);
 app.use("/contract_has_product", contract_has_product)
 
