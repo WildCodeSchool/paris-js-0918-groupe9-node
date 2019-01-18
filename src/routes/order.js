@@ -47,8 +47,8 @@ Router.post('/', (req, res) => {
 	})
 });
 
+
 Router.post('/:idcontract', (req, res) => {
-	console.log(req.body)
 	connection.query("INSERT into `order` (contract_id, delivery_address) values (?,?)", [req.params.idcontract,req.body.products[0].deliveryAdress], (err, results) => {
 			console.log(results);
 			if (err) {
