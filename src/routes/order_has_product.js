@@ -21,7 +21,7 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
-    req.body.products.map(product => {
+    req.body.product.map(product => {
         const sql = 'INSERT into order_has_product (product_id,order_id,quantity,size,color) values (?,?,?,?,?)'
         const value = [product.product_id, product.order_id, product.quantity, product.size, product.color]
         connection.query(sql, value, (err, results) => {
