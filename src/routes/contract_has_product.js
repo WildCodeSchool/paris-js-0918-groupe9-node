@@ -11,8 +11,8 @@ const Router = express.Router();
 //         }
 //     });
 // })
-Router.get('/idcontract', (req, res) => {
-    connection.query('select product.name from contract_has_product \
+Router.get('/:idcontract', (req, res) => {
+    connection.query('select product.name,contract_has_product.product_id from contract_has_product \
     inner join contract on contract.id= contract_has_product.contract_id \
     inner join product on product.id = contract_has_product.product_id \
     where contract_id=?', req.params.idcontract,(err, results) => {

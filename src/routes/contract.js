@@ -158,9 +158,13 @@ Router.post('/uploaddufichier', upload.single('file'), function (req, res, next)
 
         })
     }
-
+    else if (!req.file) {
+        res.sendStatus(206);
+        res.end();
+    }
     else if (!req.body.products) {
         res.sendStatus(210);
+        res.end();
     }
     else if (!req.file) {
         res.sendStatus(206);
