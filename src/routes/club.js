@@ -180,9 +180,9 @@ Router.post('/create', (req, res) => {
           smtpTransport.sendMail({
             from: "gmail", // Expediteur
             to: req.body.email, // Destinataires
-            subject: "Bienvenue au Allsponsored!", // Sujet
-            text: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
-            html: `Bonjour, Voici votre indetifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
+            subject: "Bienvenue chez Allsponsored!", // Sujet
+            text: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
+            html: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
           }, (error, response) => {
             if (error) {
               console.log(error);
