@@ -25,6 +25,18 @@ Router.get('/:id', (req, res) => {
         }
     });
 });
+Router.get('/:id/list', (req, res) => {
+    connection.query('SELECT club.id as clubId, contract.id as contractId, contract.name as contractName, project.visual_shirt, project.url_summary FROM club\
+    JOIN contract ON club.id = contract.club_id\
+    JOIN project ON project.id = contract.project_id\
+    WHERE club.id = ?', req.params.id, (err, results) => {
+        if (err) {
+            res.status(500).send("Erreur lors de la récupération des données");
+        } else {
+            res.json(results);
+        }
+    });
+});
 Router.get('/club/:idclub', (req, res) => {
     connection.query('SELECT * from contract where club_id=?', req.params.idclub, (err, results) => {
         if (err) {
