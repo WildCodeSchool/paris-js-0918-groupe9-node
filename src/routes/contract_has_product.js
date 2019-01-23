@@ -23,15 +23,15 @@ Router.get('/:idcontract', (req, res) => {
         }
     });
 })
-Router.get('/:id', (req, res) => {
-    connection.query('SELECT * from contract_has_product where id=?', req.params.id, (err, results) => {
-        if (err) {
-            res.status(500).send("Erreur lors de la récupération des données");
-        } else {
-            res.json(results);
-        }
-    });
-})
+// Router.get('/:id', (req, res) => {
+//     connection.query('SELECT * from contract_has_product where id=?', req.params.id, (err, results) => {
+//         if (err) {
+//             res.status(500).send("Erreur lors de la récupération des données");
+//         } else {
+//             res.json(results);
+//         }
+//     });
+// })
 Router.post('/', (req, res) => {
     const values = req.body.products.map(product => {
         return (
