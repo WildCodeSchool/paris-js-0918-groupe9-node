@@ -141,6 +141,8 @@ Router.delete("/:id", (req, res) => {
 });
 
 Router.get("/contract/:idclub", (req, res) => {
+  console.log("Yoooooo");
+  
   connection.query(
     "select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
     from contract \
