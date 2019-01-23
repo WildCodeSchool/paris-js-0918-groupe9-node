@@ -178,9 +178,22 @@ Router.delete("/:id", (req, res) => {
   );
 });
 
-Router.get("/contract/:idclub", (req, res) => {
-  console.log("Yoooooo");
-  
+Router.get("/contract/:idcontract", (req, res) => {
+  connection.query(
+    "select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
+    from contract \
+    inner join club on contract.club_id = club.id \
+    left join `order` on contract.id = `order`.contract_id\
+    left join survey on contract.id = survey.contract_id\
+    where contract.id = ?", req.params.idcontract, (err, results) => {
+      if (err) {
+        res.status(500).send('Erreur lors de la récupération des employés');
+      } else {
+        res.json(results);
+      }
+    });
+})
+Router.get("/club-contract/:idclub", (req, res) => {
   connection.query(
     "select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
     from contract \
