@@ -1,6 +1,8 @@
 const express = require("express");
 const connection = require("../helper/conf.js");
 const Router = express.Router();
+const multer = require('multer')
+const mime = require('mime')
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -80,8 +82,7 @@ Router.post('/', (req, res) => {
       res.json(results);
 
     }
-  }
-  );
+  });
 });
 Router.get("/:id", (req, res) => {
   connection.query(
@@ -107,7 +108,44 @@ Router.post("/", (req, res) => {
     }
   });
 });
+Router.put(
+  "/password/:id",
+  (req, res, next) => {
+    connection.query(
+      "SELECT password from club where id = ?",
+      req.params.id,
+      (err, result) => {
+        if (err) throw err;
+        bcrypt.compare(req.body.oldPassword, result[0].password, (err, result) => {
+          if (result) {
+            req.body.updated_at = new Date();
+            next();
+          }
+        });
+      }
+    );
+  },
+  (req, res) => {
+    const idClub = req.params.id;
+    const password = req.body.password;
+    const update = req.body.updated_at;
 
+    const saltRounds = 10;
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      connection.query(
+        "UPDATE club SET password = ?, updated_at = ? WHERE id = ?",
+        [hash, update, idClub],
+        (err, results) => {
+          if (err) {
+            res.status(500).send("Erreur lors de la modification des données");
+          } else {
+            res.sendStatus(200);
+          }
+        }
+      );
+    });
+  }
+);
 Router.put("/:id", (req, res) => {
   const idcontract = req.params.id;
   const formData = req.body;
@@ -141,6 +179,8 @@ Router.delete("/:id", (req, res) => {
 });
 
 Router.get("/contract/:idclub", (req, res) => {
+  console.log("Yoooooo");
+  
   connection.query(
     "select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
     from contract \
@@ -166,17 +206,16 @@ Router.post('/create', (req, res) => {
           console.log(err);
           res.status(500).send(`Erreur lors de l'insertion des données`);
 
-        }
-        else {
+        } else {
           if (req.body.email)
-          var smtpTransport = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
+            var smtpTransport = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
                 user: `${process.env.USER_GMAIL} `,
                 pass: `${process.env.PASS_GMAIL}`
-            }
+              }
 
-        });
+            });
           smtpTransport.sendMail({
             from: "gmail", // Expediteur
             to: req.body.email, // Destinataires
@@ -194,14 +233,75 @@ Router.post('/create', (req, res) => {
 
         }
       });
-    }
-    else if (!req.body.email || !req.body.name || !req.body.address) {
+    } else if (!req.body.email || !req.body.name || !req.body.address) {
       res.sendStatus(206)
-    }
-    else {
+    } else {
       res.sendStatus(400);
     }
   });
 });
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/files')
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + '.' + mime.getExtension(file.mimetype))
+  }
+})
+
+const upload = multer({
+  dest: 'tmp/',
+  storage
+});
+
+Router.put('/uploaddufichier/:contractId', upload.single('file'), function (req, res, next) {
+  if (req.file) {
+    
+    let insertSqlQuery = 'UPDATE contract SET url_signed_contract=? WHERE id=?';
+    let valuesToInsert = [req.file.path.replace('public', ''), req.params.contractId];
+    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de l'insertion des données`);
+      } else {
+        console.log(results)
+        res.sendStatus(200);
+      }
+    })
+  }
+});
+Router.put('/uploadlogopdf/:clubId', upload.single('file'), function (req, res, next) {
+  if (req.file) {
+    let insertSqlQuery = 'UPDATE club SET url_logo=? WHERE id=?';
+    let valuesToInsert = [req.file.path.replace('public', ''), req.params.clubId];
+    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de l'insertion des données`);
+      } else {
+        console.log(results)
+        res.sendStatus(200);
+      }
+    })
+  }
+});
+Router.put('/uploadlogovecto/:clubId', upload.single('file'), function (req, res, next) {
+  if (req.file) {
+    let insertSqlQuery = 'UPDATE club SET url_logo_vectorized =? WHERE id=?';
+    let valuesToInsert = [req.file.path.replace('public', ''), req.params.clubId];
+    connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de l'insertion des données`);
+      } else {
+        console.log(results)
+        res.sendStatus(200);
+      }
+    })
+  }
+});
+
 
 module.exports = Router;

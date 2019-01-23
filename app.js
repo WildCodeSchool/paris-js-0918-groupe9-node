@@ -61,9 +61,9 @@ const authorize = (req, res, next) => {
 
 app.use("/signinclub", signin_club);
 app.use("/signinadmin", signin_admin);
-app.use("/user", authorize, user);
-app.use("/club", authorize, club);
-app.use("/sponsor", authorize, sponsor);
+app.use("/user",  user);
+app.use("/club",  club);
+app.use("/sponsor",  sponsor);
 // app.use("/sponsor", authorize, sponsor);
 //app.use("/project", authorize, project);
 
