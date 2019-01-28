@@ -271,7 +271,6 @@ const upload = multer({
 
 Router.put('/uploaddufichier/:contractId', upload.single('file'), function (req, res, next) {
   if (req.file) {
-    
     let insertSqlQuery = 'UPDATE contract SET url_signed_contract=? WHERE id=?';
     let valuesToInsert = [req.file.path.replace('public', ''), req.params.contractId];
     connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
