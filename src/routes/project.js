@@ -95,7 +95,9 @@ const upload = multer({
 });
 
 Router.post('/uploaddesfichier', upload.any(), (req, res, next) => {
-    console.log(req.files, req.body);
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+      } else {
     if (req.files && req.files[0] && req.files[1]) {
         const sql = `INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)`;
         const value = [req.body.user_id, req.body.name, req.body.status, req.files[0].path.replace('public', ''), req.files[1].path.replace('public', '')];
@@ -125,6 +127,7 @@ Router.post('/uploaddesfichier', upload.any(), (req, res, next) => {
     else {
         res.sendStatus(206);
     }
+}
 });
 // Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
 //     console.log(req.file)
