@@ -19,6 +19,9 @@ Router.get('/', (req, res) => {
 })
 
 Router.get("/table", (req, res) => {
+  if (req.role !== "admin") {
+    res.sendStatus(401);
+  } else {
   connection.query(
     "SELECT club.id as clubId ,club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, `order`.id as orderId, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
@@ -28,14 +31,18 @@ Router.get("/table", (req, res) => {
     LEFT OUTER JOIN `action`ON contract.id = `action`.contract_id",
     (err, results) => {
       if (err) {
-        res.status(500).send("Erreur lors de la récupération des employés");
+        res.status(500).send("Erreur lors de la récupération des donneés");
       } else {
         res.json(results);
       }
     }
-  );
+  )
+  }
 });
 Router.get("/filtername", (req, res) => {
+  if (req.role !== "admin") {
+    res.sendStatus(401);
+  } else {
   connection.query(
     "SELECT club.id as clubId, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, `order`.id as orderId, survey.status as surveyStatus, `action`.name as actionName\
     FROM club\
@@ -51,10 +58,14 @@ Router.get("/filtername", (req, res) => {
         res.json(results);
       }
     }
-  );
+  )
+  }
 });
 
 Router.get("/filterdate", (req, res) => {
+  if (req.role !== "admin") {
+    res.sendStatus(401);
+} else {
   connection.query(
     "SELECT club.id as clubId, club.name as clubName, club.url_logo, contract.name as contractName, `order`.status, `order`.id as orderId, survey.status as surveyStatus, `action`.name as actionName\
       FROM club\
@@ -69,8 +80,9 @@ Router.get("/filterdate", (req, res) => {
       } else {
         res.json(results);
       }
-    });
-})
+    })
+  }
+});
 
 Router.post('/', (req, res) => {
   connection.query('INSERT into club SET ?', req.body, (err, results) => {
@@ -129,7 +141,6 @@ Router.put(
     const idClub = req.params.id;
     const password = req.body.password;
     const update = req.body.updated_at;
-
     const saltRounds = 10;
     bcrypt.hash(password, saltRounds, (err, hash) => {
       connection.query(
@@ -194,6 +205,9 @@ Router.get("/contract/:idcontract", (req, res) => {
     });
 })
 Router.get("/club-contract/:idclub", (req, res) => {
+  if (req.role !== "admin") {
+    res.sendStatus(401);
+  } else {
   connection.query(
     "select contract.name, contract.url_contract, contract.url_signed_contract, `order`.id as order_id, `order`.reference as order_reference, survey.id as survey_id\
     from contract \
@@ -206,52 +220,57 @@ Router.get("/club-contract/:idclub", (req, res) => {
       } else {
         res.json(results);
       }
-    });
-})
+    })
+  }
+});
 Router.post('/create', (req, res) => {
-  bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-    let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
-    let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
-    if (req.body.email && req.body.name && req.body.address) {
-      connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
-        console.log(results);
-        if (err) {
-          console.log(err);
-          res.status(500).send(`Erreur lors de l'insertion des données`);
+  if (req.role !== "admin") {
+    res.sendStatus(401);
+  } else {
+    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+      let insertSqlQuery = 'INSERT INTO club (email, password, name, address) VALUES(?,?,?,?)';
+      let valuesToInsert = [req.body.email, hash, req.body.name, req.body.address];
+      if (req.body.email && req.body.name && req.body.address) {
+        connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
+          console.log(results);
+          if (err) {
+            console.log(err);
+            res.status(500).send(`Erreur lors de l'insertion des données`);
 
-        } else {
-          if (req.body.email)
-            var smtpTransport = nodemailer.createTransport({
-              service: "gmail",
-              auth: {
-                user: `${process.env.USER_GMAIL} `,
-                pass: `${process.env.PASS_GMAIL}`
+          } else {
+            if (req.body.email)
+              var smtpTransport = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  user: `${process.env.USER_GMAIL} `,
+                  pass: `${process.env.PASS_GMAIL}`
+                }
+
+              });
+            smtpTransport.sendMail({
+              from: "gmail", // Expediteur
+              to: req.body.email, // Destinataires
+              subject: "Bienvenue chez Allsponsored!", // Sujet
+              text: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
+              html: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
+            }, (error, response) => {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Message sent: " + response.response);
               }
-
             });
-          smtpTransport.sendMail({
-            from: "gmail", // Expediteur
-            to: req.body.email, // Destinataires
-            subject: "Bienvenue chez Allsponsored!", // Sujet
-            text: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `,
-            html: `Bonjour, Voici votre identifiant ${req.body.email} et mot de passe ${req.body.password} pour votre espace club `
-          }, (error, response) => {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Message sent: " + response.response);
-            }
-          });
-          res.sendStatus(200);
+            res.sendStatus(200);
 
-        }
-      });
-    } else if (!req.body.email || !req.body.name || !req.body.address) {
-      res.sendStatus(206)
-    } else {
-      res.sendStatus(400);
-    }
-  });
+          }
+        });
+      } else if (!req.body.email || !req.body.name || !req.body.address) {
+        res.sendStatus(206)
+      } else {
+        res.sendStatus(400);
+      }
+    });
+  }
 });
 
 

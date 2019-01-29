@@ -21,6 +21,9 @@ Router.get('/:id', (req, res) => {
     });
 })
 Router.post('/', (req, res) => {
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+    } else {
     connection.query('INSERT into product SET ?', req.body, (err, results) => {
         console.log(results);
         if (err) {
@@ -31,6 +34,7 @@ Router.post('/', (req, res) => {
             res.sendStatus(200);
             }
         })
+    }
 });
 // const product_id = results.insertId;
 //             connection.query('INSERT INTO product (product_id) VALUES ('+product_id+')', (err, results) => {
@@ -42,6 +46,9 @@ Router.post('/', (req, res) => {
 //                     res.sendStatus(200);
 //                 }
 Router.put('/:id', (req, res) => {
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+    } else {
     const idproduct = req.params.id;
     const formData = req.body;
     formData.updated_at = new Date();
@@ -54,6 +61,7 @@ Router.put('/:id', (req, res) => {
         }
 
     })
+}
 })
 
 Router.delete('/:id', (req, res) => {

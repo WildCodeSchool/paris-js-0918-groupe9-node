@@ -53,7 +53,7 @@ Router.post("/", (req, res) => {
           if (result == true) {
             const tokenInfo = {
               email: req.body.email,
-              role: "club"
+              role: "admin"
             };
             if (tokenInfo) {
               const token = jwt.sign(tokenInfo, jwtSecret);

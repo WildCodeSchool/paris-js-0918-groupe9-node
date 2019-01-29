@@ -59,6 +59,9 @@ Router.post('/', (req, res) => {
     })
 });
 Router.post('/ajouteclub', (req, res) => {
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+    } else {
     let insertSqlQuery = 'INSERT INTO contract (project_id,club_id,name,url_contract) VALUES(?,?,?,?)';
     let valuesToInsert = [req.body.project_id, req.body.club_id, req.body.name, req.body.url_contract];
     connection.query(insertSqlQuery, valuesToInsert, (err, results) => {
@@ -70,6 +73,7 @@ Router.post('/ajouteclub', (req, res) => {
             res.sendStatus(200);
         }
     })
+}
 });
 Router.put('/:id', (req, res) => {
     const idcontract = req.params.id;
@@ -98,6 +102,9 @@ Router.delete('/:id', (req, res) => {
 })
 
 Router.get('/project/:idproject', (req, res) => {
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+    } else {
     connection.query('select a.*,b.name as clubName, c.name as projectName from contract a \
     inner join club b on a.club_id = b.id \
     inner join project c on a.project_id = c.id \
@@ -107,8 +114,9 @@ Router.get('/project/:idproject', (req, res) => {
             } else {
                 res.json(results);
             }
-        });
-})
+        })
+    }
+});
 
 Router.get('/order/:idcontract', (req, res) => {
     connection.query('select * from order inner join contract on order.contract_id = contract.id where contract.id = ?', req.params.idcontract, (err, results) => {
@@ -142,7 +150,9 @@ const upload = multer({
     storage
 });
 Router.post('/uploaddufichier', upload.single('file'), function (req, res, next) {
-    console.log("body", req.body);
+    if (req.role !== "admin") {
+        res.sendStatus(401);
+    } else {
     if (req.file && req.body.products) {
         let insertSqlQuery = 'INSERT INTO contract (project_id,club_id,name,url_contract) VALUES(?,?,?,?)';
         let valuesToInsert = [req.body.project_id, req.body.club_id, req.body.name, req.file.path.replace('public', '')];
@@ -184,5 +194,6 @@ Router.post('/uploaddufichier', upload.single('file'), function (req, res, next)
     else {
         res.sendStatus(400);
     }
-})
+}
+});
 module.exports = Router;

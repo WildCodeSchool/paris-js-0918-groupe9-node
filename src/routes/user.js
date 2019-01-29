@@ -35,9 +35,7 @@ Router.post("/", (req, res) => {
     }
   });
 });
-Router.put(
-  "/:id",
-  (req, res, next) => {
+Router.put("/:id",(req, res, next) => {
     req.body.updated_at = new Date();
     next();
   },
@@ -61,9 +59,6 @@ Router.put(
   }
 );
 
-//route pour le changement de password
-//$2b$10$lxeyQLPie01wRxd0lOSk4etyN4cNx0AUf9ZhW4NMdX2uVR88bOn.W
-//$2b$10$U5Xe5DXpw7vLLHEa0QH9aeF6MY/NdDI6HEH/NcjlroVIRaOfcdXY.
 Router.put(
   "/password/:id",
   (req, res, next) => {
