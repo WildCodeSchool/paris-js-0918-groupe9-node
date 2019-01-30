@@ -99,7 +99,7 @@ Router.post('/uploaddesfichier', upload.any(), (req, res, next) => {
         res.sendStatus(401);
       } else {
     if (req.files && req.files[0] && req.files[1]) {
-        const sql = `INSERT into project (user_id,name,status,visual_shirt,url_summary) values (?,?,?,?,?)`;
+        const sql = `INSERT into project (user_id,name,status,url_summary,visual_shirt) values (?,?,?,?,?)`;
         const value = [req.body.user_id, req.body.name, req.body.status, req.files[0].path.replace('public', ''), req.files[1].path.replace('public', '')];
         connection.query(sql, value, (err, results) => {
             if (err) {
