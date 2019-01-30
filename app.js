@@ -69,14 +69,14 @@ const authorizeUser = (req, res, next) => {
 
 app.use("/signinclub", signin_club);
 app.use("/signinadmin", signin_admin);
-app.use("/user", authorize, authorizeUser, user);
+app.use("/user", authorize, user);
 app.use("/club", authorize, club);
-app.use("/sponsor", authorize, authorizeUser, sponsor);
+app.use("/sponsor", authorize, sponsor);
 app.use("/project", authorize, project);
 
 app.use("/contract", authorize, contract);
 app.use("/order", authorize, order);
-app.use("/project_has_sponsor", authorize,authorizeUser, project_has_sponsor);
+app.use("/project_has_sponsor", authorize, project_has_sponsor);
 app.use("/product", authorize, product_list);
 app.use("/order_has_product", authorize, order_has_product);
 app.use("/contract_has_product", authorize, contract_has_product);
